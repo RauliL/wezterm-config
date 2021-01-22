@@ -5,10 +5,10 @@ return {
   font_antialias = 'Subpixel',
   font_dirs = {'fonts'},
   font = wezterm.font_with_fallback({
-    'DejaVu Sans Mono',
+    'Comic Mono',
     'FiraCode Nerd Font Mono',
   }),
-  font_size = 12.0,
+  font_size = 13.0,
   keys = {
     {
       key = 'Insert',
