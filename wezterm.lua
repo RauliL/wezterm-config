@@ -2,8 +2,6 @@ local wezterm = require 'wezterm'
 
 return {
   color_scheme = 'Afterglow',
-  -- disable_default_key_bindings = true,
-  disable_default_mouse_bindings = true,
   font_antialias = 'Subpixel',
   font_dirs = {'fonts'},
   font = wezterm.font_with_fallback({
@@ -83,16 +81,56 @@ return {
       action = wezterm.action{MoveTabRelative=1},
     },
   },
-  -- mouse_bindings = {
-  --  {
-  --    event = {
-  --      Down = {
-  --        button = 'Middle',
-  --        streak = 1,
-  --      },
-  --    },
-  --    mods = 'NONE',
-  --    action = 'Paste',
-  --  },
-  -- },
+  mouse_bindings = {
+    {
+      event = {
+        Down = {
+          streak = 1,
+          button = 'Left',
+        },
+      },
+      mods = 'NONE',
+      action = wezterm.action{SelectTextAtMouseCursor='Cell'},
+    },
+    {
+      event = {
+        Down = {
+          streak = 2,
+          button = 'Left',
+        },
+      },
+      mods = 'NONE',
+      action = wezterm.action{SelectTextAtMouseCursor='Word'},
+    },
+    {
+      event = {
+        Down = {
+          streak = 3,
+          button = 'Left',
+        },
+      },
+      mods = 'NONE',
+      action = wezterm.action{SelectTextAtMouseCursor='Line'},
+    },
+    {
+      event = {
+        Up = {
+          streak = 1,
+          button = 'Left',
+        },
+      },
+      mods = 'NONE',
+      action = 'CompleteSelectionOrOpenLinkAtMouseCursor',
+    },
+    {
+      event = {
+        Down = {
+          streak = 1,
+          button = 'Middle',
+        },
+      },
+      mods = 'NONE',
+      action = 'Paste',
+    },
+  },
 }
