@@ -1,13 +1,22 @@
 local wezterm = require 'wezterm'
 
+function font_with_fallback(name, params)
+  local names = {name, 'FiraCode Nerd Font Mono'}
+
+  return wezterm.font_with_fallback(names, params)
+end
+
 return {
   color_scheme = 'Afterglow',
+  font = font_with_fallback('Comic Mono'),
   font_antialias = 'Subpixel',
   font_dirs = {'fonts'},
-  font = wezterm.font_with_fallback({
-    'Comic Mono',
-    'FiraCode Nerd Font Mono',
-  }),
+  font_rules = {
+    {
+      intensity = 'Bold',
+      font = font_with_fallback('Comic Mono Bold'),
+    },
+  },
   font_size = 13.0,
   keys = {
     {
