@@ -120,7 +120,7 @@ return {
         },
       },
       mods = 'NONE',
-      action = 'CompleteSelectionOrOpenLinkAtMouseCursor',
+      action = wezterm.action{CompleteSelectionOrOpenLinkAtMouseCursor='PrimarySelection'},
     },
     {
       event = {
