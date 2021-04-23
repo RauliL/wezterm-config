@@ -6,6 +6,39 @@ function font_with_fallback(name, params)
   return wezterm.font_with_fallback(names, params)
 end
 
+wezterm.on('plumb', function(window, pane)
+  local sel = window:get_selection_text_for_pane(pane)
+  local cwd = pane:get_current_working_dir()
+
+  if cwd == nil or sel == nil then
+    return
+  end
+
+  -- Extract current working directory from the file URI and make sure it
+  -- actually contains an directory.
+  cwd = cwd:gsub("^file://[^/]*", "")
+  if #cwd == 0 then
+    return
+  end
+
+  -- Trim whitespace from the selected text and make sure it's not empty.
+  sel = sel:gsub("^%s*(.-)%s*$", "%1")
+  if #sel == 0 then
+    return
+  end
+
+  local success, stdout, stderr = wezterm.run_child_process({
+    '/bin/sh',
+    wezterm.config_dir .. '/bin/plumb',
+    cwd,
+    sel
+  })
+
+  if not success and #stderr > 0 then
+    wezterm.log_error(stderr)
+  end
+end)
+
 return {
   color_scheme = 'Afterglow',
   font = font_with_fallback('Comic Mono'),
@@ -38,6 +71,11 @@ return {
       key = 'x',
       mods = 'CTRL | SHIFT',
       action = 'ActivateCopyMode',
+    },
+    {
+      key = 'z',
+      mods = 'CTRL | SHIFT',
+      action = wezterm.action{EmitEvent='plumb'},
     },
     {
       key = 'PageUp',
@@ -140,6 +178,16 @@ return {
       },
       mods = 'NONE',
       action = 'Paste',
+    },
+    {
+      event = {
+        Down = {
+          streak = 1,
+          button = 'Middle',
+        },
+      },
+      mods = 'CTRL',
+      action = wezterm.action{EmitEvent='plumb'},
     },
   },
 }
