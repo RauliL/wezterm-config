@@ -1,0 +1,52 @@
+#!/bin/sh
+
+script=$0
+dir=$1
+text=$2
+
+# Check that correct number of arguments were given.
+if [ "$#" -ne 2 ]
+then
+  echo "Usage: $script <directory> <text>"
+  exit 1
+fi
+
+# Helper function for displaying error message and exiting the script.
+die()
+{
+  echo "$script: $1" > /dev/stderr
+  exit 1
+}
+
+# Helper function for executing an executable with an argument.
+exec_with()
+{
+  which "$1" > /dev/null 2>&1 || die "\"$1\" is missing."
+  exec "$1" "$2"
+}
+
+# First ensure that we were provided with working directory.
+[ -z "$dir" ] && die "No working directory provided."
+
+# Then ensure that we were provided selected text.
+[ -z "$text" ] && die "No text provided."
+
+chdir "$dir" || die "Cannot chdir to \"$dir\"."
+
+# If it's ordinary file or directory, open it.
+[ -f "$text" -o -d "$text" ] && exec_with xdg-open "$text"
+
+# If it's an URL/URI, also just open it.
+echo "$text" | grep -Eq "^.*.[A-Za-z]+-*" && exec_with xdg-open "$text"
+
+# Use default E-mail client for E-mail addresses.
+echo "$text" | grep -Eq "^.*@.*.[A-Za-z]+$" && exec_with xdg-email "$text"
+
+# Requests for comments.
+if echo "$text" | grep -Eq "RFC:[0-9]+"
+then
+  number=`echo -n "$text" | sed -E "s/RFC:([0-9]+)/\\1/"`
+  exec_with xdg-open "https://www.rfc-editor.org/info/rfc$number"
+fi
+
+die "I don't know what to do with \"$text\"."
